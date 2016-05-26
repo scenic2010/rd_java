@@ -40,7 +40,7 @@ public class MySocketServer {
     
     public static List<SocketWrapper> sw = Collections.synchronizedList(new ArrayList<SocketWrapper>());
         
-    private File logFile = new File(System.getProperty("user.dir") + "/" + getTime()+"_log.txt");
+    private File logFile = new File(System.getProperty("user.dir") + "/" + getTTime()+"_log.txt");
 
 	private String version= "1.3";
 	
@@ -67,9 +67,8 @@ public class MySocketServer {
                
                 myLock.writeLock().lock();
                 sw.add(new SocketWrapper(sc));
+                System.out.println("Create SocketWrapper Ip: " + sc.getLocalAddress().getHostAddress() + " " + sw.size());
                 myLock.writeLock().unlock();
-                
-            	System.out.println("Create SocketWrapper Ip: " + sc.getLocalAddress().getHostAddress() + " " + sw.size());
             	
             	System.out.println("=========================================");
                 
@@ -86,7 +85,7 @@ public class MySocketServer {
     }
 
     static Calendar c = Calendar.getInstance();//可以对每个时间域单独修改
-    public static String getTime(){
+    public static String getTTime(){
     	c.clear();
     	c.setTimeInMillis(System.currentTimeMillis());
 		int year = c.get(Calendar.YEAR); 
@@ -105,7 +104,7 @@ public class MySocketServer {
 		return time;
     }
     
-    static class SocketWrapper {
+     class SocketWrapper {
     	
     	//消息来自于模拟器
     	private static final int MSG_TYPE_SIMULATE = 1;
@@ -131,6 +130,24 @@ public class MySocketServer {
 
 		private boolean isRun = true;
 		
+	    private Calendar cc = Calendar.getInstance();//可以对每个时间域单独修改
+	    
+	    // 只有一条线程可以获取到这个方法
+	    private synchronized String getTime(){
+	    	cc.clear();
+	    	cc.setTimeInMillis(System.currentTimeMillis());
+			int year = cc.get(Calendar.YEAR); 
+			int month = cc.get(Calendar.MONTH) + 1; 
+			int date = cc.get(Calendar.DATE); 
+			int hour = cc.get(Calendar.HOUR_OF_DAY); 
+			int minute = cc.get(Calendar.MINUTE); 
+			int second = cc.get(Calendar.SECOND); 
+			int milisecond = cc.get(Calendar.MILLISECOND);
+			String time = year + "-" + month + "-" + date + "_" 
+						  + hour + "-" + minute + "-" + second + ":" + milisecond;
+			return time;
+	    }
+				
 		private void close(){
 			isRun = false;
 			try {
@@ -145,7 +162,7 @@ public class MySocketServer {
             
 			// 这里需要有一把锁来控制
 			myLock.writeLock().lock();
-			sw.remove(this);
+			sw.remove(SocketWrapper.this);
 			myLock.writeLock().unlock();
 		}
 		
@@ -164,7 +181,7 @@ public class MySocketServer {
             
 			try {
 				if (socket.isConnected()) {
-				    byte[] b = new byte[1024*1024*8];
+				    byte[] b = new byte[1024*100];
 				    int value = inputStream.read(b);
 				    
 				    if(value > 0){
@@ -189,7 +206,12 @@ public class MySocketServer {
 				    	SocketWrapper tmp = sw.get(i);
 				    	if(tmp.clientId != null && tmp.clientId.equals(clientId)){
 				    		p("remove the same client id " + clientId);
-				    		sw.remove(tmp);
+				    		
+				    		//sw.remove(tmp);
+				    		tmp.close();
+							
+				    		 					
+				    		
 				    		i--;
 				    	}
 				    }
@@ -339,16 +361,16 @@ public class MySocketServer {
 		
 		private void e(String str) {
 			System.err.println("\t\t" + str);
+			writeFileAndPrint(str);
 		}
 		
-		private void writeFileAndPrint(String str){
+		private synchronized void writeFileAndPrint(String str){			         
 			System.out.println(str);
 			try {
 				logOutput.write(str);
 				logOutput.newLine();
 				logOutput.flush();
-			} catch (IOException e) {
-				
+			} catch (IOException e) {				
 				e.printStackTrace();
 			}
 		}
@@ -356,12 +378,13 @@ public class MySocketServer {
 		class ReaderMsg implements Runnable {
 	        @Override 
 	        public void run() {
+	        	byte[] b = new byte[1024*1024*4];
 	            while (isRun) {
 	                try {
 	                	Thread.sleep(100);
 	                	
 	                    if (socket.isConnected()) {
-	                        byte[] b = new byte[1024*1024*8];
+	                        //byte[] b = new byte[1024*1024*8];
 	                        int value = inputStream.read(b);
 	                        
 	                        if(value > 0){
@@ -372,6 +395,9 @@ public class MySocketServer {
 	                        	for (String strValue : tmp) {	
 									sendMessageToOther(strValue);
 								}
+
+	                        	str = null;
+	                        	tmp = null;
 	                        }
 	                    }else {
 	                    	p(" socket is not connected");
@@ -383,9 +409,12 @@ public class MySocketServer {
 	                }catch(InterruptedException e){
                                 p("ReaderMsg InterruptedException Error " + e.getMessage() + " will remove this ");
 	                	close();
-	                }catch (IOException e) {
-	                    e.printStackTrace();
-	                } 
+	                }catch(Exception e) 
+                    {
+                        p("ReaderMsg InterruptedException Error " + e.getMessage() + " will remove this ");
+	                	close();
+                        java.awt.Toolkit.getDefaultToolkit().beep();
+                    }
 	            }
 	        }
 	    }
