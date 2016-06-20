@@ -20,28 +20,29 @@ public class TestDemonThread {
     }
 
 
-}
+   private   static class TestThread extends Thread {
 
-
-class TestThread extends Thread {
-
-    public TestThread() {
-    }
-/** */
-    /**
-     * 线程的run方法，它将和其他线程同时运行
-     */
-    public void run() {
-        for (int i = 1; i <= 1000; i++) {
-            try {
-                Thread.sleep(100);
-
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
-            }
-            System.out.println(i);
+        public TestThread() {
         }
+/** */
+        /**
+         * 线程的run方法，它将和其他线程同时运行
+         */
+        public void run() {
+            for (int i = 1; i <= 1000; i++) {
+                try {
+                    Thread.sleep(100);
+
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+                System.out.println(i);
+            }
+        }
+
+
     }
 
-
 }
+
+

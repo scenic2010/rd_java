@@ -1,5 +1,8 @@
 package scenic.socket;
 
+
+import org.json.JSONObject;
+
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -16,156 +19,153 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
-
-import net.sf.json.JSONObject;
-
-import java.util.concurrent.locks.ReadWriteLock; 
-import java.util.concurrent.locks.ReentrantReadWriteLock; 
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
-  	ÎªÁËÏûÏ¢¿ÉÒÔµã¶ÔµãµÄ½»Á÷£¬ĞèÒª¿Í»§¶ËÁ¬½Ó³É¹¦socketÖ®ºó£¬ÓĞ¸öÉí·İÈÏÖ¤µÄ»úÖÆ
-  	ÔÚsocketÁ¬½Ó³É¹¦Ö®ºó£¬¿Í»§¶Ë¸ø·şÎñÆ÷·¢ËÍÒ»¸öÖ¸Áî£¬ÈçÏÂ¸ñÊ½
-  	
-  	@identity:clientid:socketType
-  	clientid ÊÇStringÀàĞÍµÄÊı¾İ
-  	socketType ÊÇIntegerÀàĞÍµÄ£¬È¡Öµ  1´ú±íÀ´×ÔÄ£ÄâÆ÷£¬ 2´ú±íÀ´×Ô¿ØÖÆ³ÌĞò£¬3´ú±íÀ´×ÔÃüÁîĞĞ
-  	
-  	Í¬Ê±¿ØÖÆ³ÌĞòÔÙ·¢ËÍÃ¿Ò»ÌõÃüÁîµÄÊ±ºò¶¼ĞèÒªÍ¨¹ıJSONĞ¯´øclientidµÄÊı¾İ
-  	
- * Created by scenic on 15/11/5.
+ ä¸ºäº†æ¶ˆæ¯å¯ä»¥ç‚¹å¯¹ç‚¹çš„äº¤æµï¼Œéœ€è¦å®¢æˆ·ç«¯è¿æ¥æˆåŠŸsocketä¹‹åï¼Œæœ‰ä¸ªèº«ä»½è®¤è¯çš„æœºåˆ¶
+ åœ¨socketè¿æ¥æˆåŠŸä¹‹åï¼Œå®¢æˆ·ç«¯ç»™æœåŠ¡å™¨å‘é€ä¸€ä¸ªæŒ‡ä»¤ï¼Œå¦‚ä¸‹æ ¼å¼
+
+ @identity:clientid:socketType
+ clientid æ˜¯Stringç±»å‹çš„æ•°æ®
+ socketType æ˜¯Integerç±»å‹çš„ï¼Œå–å€¼  1ä»£è¡¨æ¥è‡ªæ¨¡æ‹Ÿå™¨ï¼Œ 2ä»£è¡¨æ¥è‡ªæ§åˆ¶ç¨‹åºï¼Œ3ä»£è¡¨æ¥è‡ªå‘½ä»¤è¡Œ
+
+ åŒæ—¶æ§åˆ¶ç¨‹åºå†å‘é€æ¯ä¸€æ¡å‘½ä»¤çš„æ—¶å€™éƒ½éœ€è¦é€šè¿‡JSONæºå¸¦clientidçš„æ•°æ®
+
+  * Created by scenic on 15/11/5.
  */
 public class MySocketServer {
 
-    private static ReadWriteLock myLock = new ReentrantReadWriteLock(false); 
-    
-    public static List<SocketWrapper> sw = Collections.synchronizedList(new ArrayList<SocketWrapper>());
-        
-    private File logFile = new File(System.getProperty("user.dir") + "/" + getTTime()+"_log.txt");
+	private static ReadWriteLock myLock = new ReentrantReadWriteLock(false);
+
+	public static List<SocketWrapper> sw = Collections.synchronizedList(new ArrayList<SocketWrapper>());
+
+	private File logFile = new File(System.getProperty("user.dir") + "/" + getTTime()+"_log.txt");
 
 	private String version= "1.3";
-	
+
 	private static BufferedWriter logOutput ;
-    
-    public static void main(String args[]) {
-    	sw.clear();
-    	new MySocketServer().run();
-    }
-    
-    public  void run() {
-    	try {
+
+	public static void main(String args[]) {
+		sw.clear();
+		new MySocketServer().run();
+	}
+
+	public  void run() {
+		try {
 			logOutput = new BufferedWriter(new OutputStreamWriter(new BufferedOutputStream( new FileOutputStream(logFile))));
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
 		}
-        System.out.println("begin socket log file "+ logFile.getAbsolutePath() + " version " + version);
-        
-        try {
-            @SuppressWarnings("resource")
-			ServerSocket socket = new ServerSocket(8000);
-            while (true){
-                Socket sc = socket.accept();
-               
-                myLock.writeLock().lock();
-                sw.add(new SocketWrapper(sc));
-                System.out.println("Create SocketWrapper Ip: " + sc.getLocalAddress().getHostAddress() + " " + sw.size());
-                myLock.writeLock().unlock();
-            	
-            	System.out.println("=========================================");
-                
-                myLock.readLock().lock();
-            	for(int i = 0; i < sw.size(); i++){
-            		System.out.println("ClientId is " + sw.get(i).clientId + " socketType is " + sw.get(i).socketType);
-            	}
-                myLock.readLock().unlock();
-                
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+		System.out.println("begin socket log file "+ logFile.getAbsolutePath() + " version " + version);
 
-    static Calendar c = Calendar.getInstance();//¿ÉÒÔ¶ÔÃ¿¸öÊ±¼äÓòµ¥¶ÀĞŞ¸Ä
-    public static String getTTime(){
-    	c.clear();
-    	c.setTimeInMillis(System.currentTimeMillis());
-		int year = c.get(Calendar.YEAR); 
-		int month = c.get(Calendar.MONTH) + 1; 
-		int date = c.get(Calendar.DATE); 
-		int hour = c.get(Calendar.HOUR_OF_DAY); 
-		int minute = c.get(Calendar.MINUTE); 
-		int second = c.get(Calendar.SECOND); 
-		String time = 
-				year + "-" + 
-				month + "-" + 
-				date + "_" +
-				hour + "-" +
-				minute + "-" +
-				second ;
+		try {
+			@SuppressWarnings("resource")
+			ServerSocket socket = new ServerSocket(8000);
+			while (true){
+				Socket sc = socket.accept();
+
+				myLock.writeLock().lock();
+				sw.add(new SocketWrapper(sc));
+				System.out.println("Create SocketWrapper Ip: " + sc.getLocalAddress().getHostAddress() + " " + sw.size());
+				myLock.writeLock().unlock();
+
+				System.out.println("=========================================");
+
+				myLock.readLock().lock();
+				for(int i = 0; i < sw.size(); i++){
+					System.out.println("ClientId is " + sw.get(i).clientId + " socketType is " + sw.get(i).socketType);
+				}
+				myLock.readLock().unlock();
+
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	static Calendar c = Calendar.getInstance();//å¯ä»¥å¯¹æ¯ä¸ªæ—¶é—´åŸŸå•ç‹¬ä¿®æ”¹
+	public static String getTTime(){
+		c.clear();
+		c.setTimeInMillis(System.currentTimeMillis());
+		int year = c.get(Calendar.YEAR);
+		int month = c.get(Calendar.MONTH) + 1;
+		int date = c.get(Calendar.DATE);
+		int hour = c.get(Calendar.HOUR_OF_DAY);
+		int minute = c.get(Calendar.MINUTE);
+		int second = c.get(Calendar.SECOND);
+		String time =
+				year + "-" +
+						month + "-" +
+						date + "_" +
+						hour + "-" +
+						minute + "-" +
+						second ;
 		return time;
-    }
-    
-     class SocketWrapper {
-    	
-    	//ÏûÏ¢À´×ÔÓÚÄ£ÄâÆ÷
-    	private static final int MSG_TYPE_SIMULATE = 1;
-    	
-    	//ÏûÏ¢À´×ÔÓÚ¿ØÖÆ³ÌĞò
-    	private static final int MSG_TYPE_CONTORL = 2;
-    	
-    	//ÏûÏ¢À´×ÔÓÚcmd ´°¿Ú
-    	private static final int MSG_TYPE_DEBUG_CMD = 3;
-    	
-    	private String clientId = "unknow";
-    	private int socketType = -1;
-    	//BlockingQueue<String> cmdQeue = new PriorityBlockingQueue<String>();
-    	
-    	private InputStream inputStream = null;
-    	private OutputStream outputStream = null;
-    	
-    	private Socket socket = null;
-    	
-    	private ReaderMsg reader;
-    	
+	}
+
+	class SocketWrapper {
+
+		//æ¶ˆæ¯æ¥è‡ªäºæ¨¡æ‹Ÿå™¨
+		private static final int MSG_TYPE_SIMULATE = 1;
+
+		//æ¶ˆæ¯æ¥è‡ªäºæ§åˆ¶ç¨‹åº
+		private static final int MSG_TYPE_CONTORL = 2;
+
+		//æ¶ˆæ¯æ¥è‡ªäºcmd çª—å£
+		private static final int MSG_TYPE_DEBUG_CMD = 3;
+
+		private String clientId = "unknow";
+		private int socketType = -1;
+		//BlockingQueue<String> cmdQeue = new PriorityBlockingQueue<String>();
+
+		private InputStream inputStream = null;
+		private OutputStream outputStream = null;
+
+		private Socket socket = null;
+
+		private ReaderMsg reader;
+
 		private Thread readerThread;
 
 		private boolean isRun = true;
-		
-	    private Calendar cc = Calendar.getInstance();//¿ÉÒÔ¶ÔÃ¿¸öÊ±¼äÓòµ¥¶ÀĞŞ¸Ä
-	    
-	    // Ö»ÓĞÒ»ÌõÏß³Ì¿ÉÒÔ»ñÈ¡µ½Õâ¸ö·½·¨
-	    private synchronized String getTime(){
-	    	cc.clear();
-	    	cc.setTimeInMillis(System.currentTimeMillis());
-			int year = cc.get(Calendar.YEAR); 
-			int month = cc.get(Calendar.MONTH) + 1; 
-			int date = cc.get(Calendar.DATE); 
-			int hour = cc.get(Calendar.HOUR_OF_DAY); 
-			int minute = cc.get(Calendar.MINUTE); 
-			int second = cc.get(Calendar.SECOND); 
+
+		private Calendar cc = Calendar.getInstance();//å¯ä»¥å¯¹æ¯ä¸ªæ—¶é—´åŸŸå•ç‹¬ä¿®æ”¹
+
+		// åªæœ‰ä¸€æ¡çº¿ç¨‹å¯ä»¥è·å–åˆ°è¿™ä¸ªæ–¹æ³•
+		private synchronized String getTime(){
+			cc.clear();
+			cc.setTimeInMillis(System.currentTimeMillis());
+			int year = cc.get(Calendar.YEAR);
+			int month = cc.get(Calendar.MONTH) + 1;
+			int date = cc.get(Calendar.DATE);
+			int hour = cc.get(Calendar.HOUR_OF_DAY);
+			int minute = cc.get(Calendar.MINUTE);
+			int second = cc.get(Calendar.SECOND);
 			int milisecond = cc.get(Calendar.MILLISECOND);
-			String time = year + "-" + month + "-" + date + "_" 
-						  + hour + "-" + minute + "-" + second + ":" + milisecond;
+			String time = year + "-" + month + "-" + date + "_"
+					+ hour + "-" + minute + "-" + second + ":" + milisecond;
 			return time;
-	    }
-				
+		}
+
 		private void close(){
 			isRun = false;
 			try {
-                p("close£º" + clientId);
-                outputStream.close();
+				p("closeï¼š" + clientId);
+				outputStream.close();
 				inputStream.close();
 				socket.close();
 				readerThread.interrupt();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-            
-			// ÕâÀïĞèÒªÓĞÒ»°ÑËøÀ´¿ØÖÆ
+
+			// è¿™é‡Œéœ€è¦æœ‰ä¸€æŠŠé”æ¥æ§åˆ¶
 			myLock.writeLock().lock();
 			sw.remove(SocketWrapper.this);
 			myLock.writeLock().unlock();
 		}
-		
+
 		public SocketWrapper(Socket socket) {
 			this.socket = socket;
 			try {
@@ -174,21 +174,21 @@ public class MySocketServer {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
+
 			reader = new ReaderMsg();
 			readerThread = new Thread(reader);
 			readerThread.start();
-            
+
 			try {
 				if (socket.isConnected()) {
-				    byte[] b = new byte[1024*100];
-				    int value = inputStream.read(b);
-				    
-				    if(value > 0){
-				    	String str = new String(b,0,value);
-				    	if(str.startsWith("@identity")){
-				    		//Éí·İÑéÖ¤ÏûÏ¢
-				    		try {
+					byte[] b = new byte[1024*100];
+					int value = inputStream.read(b);
+
+					if(value > 0){
+						String str = new String(b,0,value);
+						if(str.startsWith("@identity")){
+							//èº«ä»½éªŒè¯æ¶ˆæ¯
+							try {
 								String values[] = str.split(":");
 								clientId = values[1];
 								socketType = Integer.parseInt(values[2]);
@@ -197,32 +197,32 @@ public class MySocketServer {
 								sendMessage("The msg fomat error " + e.getMessage());
 								System.err.println("The msg fomat error " + e.getMessage());
 							}
-				    	}
-				    }
-				    
-				    // ÕâÀïĞèÒªÓĞÒ»°ÑËøÀ´¿ØÖÆ
-				    myLock.writeLock().lock();
-				    for(int i = 0; i < sw.size(); i++){
-				    	SocketWrapper tmp = sw.get(i);
-				    	if(tmp.clientId != null && tmp.clientId.equals(clientId)){
-				    		p("remove the same client id " + clientId);
-				    		
-				    		//sw.remove(tmp);
-				    		tmp.close();
-							
-				    		 					
-				    		
-				    		i--;
-				    	}
-				    }
-				    myLock.writeLock().unlock();
-				    
+						}
+					}
+
+					// è¿™é‡Œéœ€è¦æœ‰ä¸€æŠŠé”æ¥æ§åˆ¶
+					myLock.writeLock().lock();
+					for(int i = 0; i < sw.size(); i++){
+						SocketWrapper tmp = sw.get(i);
+						if(tmp.clientId != null && tmp.clientId.equals(clientId)){
+							p("remove the same client id " + clientId);
+
+							//sw.remove(tmp);
+							tmp.close();
+
+
+
+							i--;
+						}
+					}
+					myLock.writeLock().unlock();
+
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-    
+
 		public boolean sendMessage(String msg){
 			try {
 				if(!msg.contains("@identity")){
@@ -230,194 +230,195 @@ public class MySocketServer {
 				}
 				outputStream.write(msg.getBytes());
 				outputStream.flush();
-                return true;
+				return true;
 			}catch (SocketException e){
-            	p("SocketException " + e.getMessage() + " will remove  this SocketWrapper ");
-            	close();
-            }catch (IOException e) {
-                p("IOException " + e.getMessage() + " will remove  this SocketWrapper ");
+				p("SocketException " + e.getMessage() + " will remove  this SocketWrapper ");
+				close();
+			}catch (IOException e) {
+				p("IOException " + e.getMessage() + " will remove  this SocketWrapper ");
 				e.printStackTrace();
 				close();
 			}
-            
-            return false;
+
+			return false;
 		}
-		
+
 		public void sendMessageToOther(String msg) {
 			switch(socketType){
-                case MSG_TYPE_SIMULATE:
-                    //Ä£ÄâÆ÷·¢ËÍ¸øÆäËûµÄ¿Í»§¶Ë
-                    JSONObject jsonObj = null;
-                    try {
-                        jsonObj = JSONObject.fromObject(msg);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    
-                    String msgClientID = null;
-                    if(jsonObj == null) {
-                        e("Error The JSON Str InValide " + msg);
-                    }else {
-                        if(jsonObj.has("clientId")){
-                            msgClientID = jsonObj.getString("clientId");
-                        }else {
-                            e("The msg can not find the clientId  " + msg);
-                        }
-                    }
-                    
-                    //ÕâÀïĞèÒªÓĞÒ»°ÑËøÀ´¿ØÖÆ
-                    myLock.readLock().lock();
-                    for(int i = 0 ; i < sw.size(); i++){
-                        SocketWrapper tmp = sw.get(i);
-                        if(tmp == this){
-                            continue;
-                        }else if(tmp.socketType == MSG_TYPE_DEBUG_CMD ){
-                            tmp.sendMessage(msg);	
-                        }else if(tmp.socketType == MSG_TYPE_CONTORL){
-                            //Èç¹ûÊÇ¿ØÖÆ³ÌĞòµÄ»°£¬ĞèÒª½øÒ»²½É¸Ñ¡
-                            if(msgClientID != null){
-                                if(tmp.clientId.equals(msgClientID)){
-                                    if (true == tmp.sendMessage(msg) )
-                                        p(clientId +  "----R---->" + tmp.clientId + " --->Success \r MSG " + msg);
-                                    else
-                                        e(clientId +  "----R---->" + tmp.clientId + " --->Failure \r MSG " + msg);
-                                    
-                                    System.out.println();
-                                }
-                            }else {
-                                tmp.sendMessage(msg);
-                            }
-                        }else {
-                            e("the socketType error " + tmp.socketType);
-                        }
-                    }
-                    myLock.readLock().unlock();
-                    
-                    break;
-                    
-                case MSG_TYPE_DEBUG_CMD:                
-                    //ÕâÀïĞèÒªÓĞÒ»°ÑËøÀ´¿ØÖÆ  
-                    myLock.readLock().lock();
-                    for(int i = 0 ; i < sw.size(); i++){
-                        SocketWrapper tmp = sw.get(i);
-                        if(tmp == this){
-                            continue;
-                        }
-                        if(tmp.socketType == MSG_TYPE_SIMULATE ||
-                                tmp.socketType == MSG_TYPE_CONTORL){
-                            tmp.sendMessage(msg);	
-                        }
-                    }
-                    myLock.readLock().unlock();
-                    break;                    
-                    
-                case MSG_TYPE_CONTORL:
-                    //À´×Ô¿ØÖÆ¶ËµÄÏûÏ¢£¬ĞèÒª·¢ËÍ¸øÄ£ÄâÆ÷ºÍÃüÁîĞĞ
-                    //ÕâÀïĞèÒªÓĞÒ»°ÑËøÀ´¿ØÖÆ
-                    myLock.readLock().lock();
-                    for(int i = 0 ; i < sw.size(); i++){
-                        SocketWrapper tmp = sw.get(i);
-                        if(tmp == this){
-                            continue;
-                        }
-                        
-                        if(tmp.socketType == MSG_TYPE_DEBUG_CMD){
-                            tmp.sendMessage(msg);	
-                        }
-                        
-                        if(tmp.socketType == MSG_TYPE_SIMULATE){
-                            
-                            if ( true == tmp.sendMessage(msg) )
-                                p(clientId +  "----S---->" + tmp.clientId + " --> Success   \r MSG " + msg);
-                            else
-                                p(clientId +  "----S---->" + tmp.clientId + " --> Failure   \r MSG " + msg);
-                        }
-                    }  
-                    myLock.readLock().unlock();
-                    break;
-                    
-                default:
-                    myLock.readLock().lock();
-                    for(int i = 0 ; i < sw.size(); i++){
-                        SocketWrapper tmp = sw.get(i);
-                        if(tmp != this){
-                            tmp.sendMessage(msg);
-                        }
-                    }
-                    myLock.readLock().unlock();
-                    break;
+				case MSG_TYPE_SIMULATE:
+					//æ¨¡æ‹Ÿå™¨å‘é€ç»™å…¶ä»–çš„å®¢æˆ·ç«¯
+					JSONObject jsonObj = null;
+					try {
+						jsonObj = new JSONObject(msg);;
+
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
+					String msgClientID = null;
+					if(jsonObj == null) {
+						e("Error The JSON Str InValide " + msg);
+					}else {
+						if(jsonObj.has("clientId")){
+							msgClientID = jsonObj.getString("clientId");
+						}else {
+							e("The msg can not find the clientId  " + msg);
+						}
+					}
+
+					//è¿™é‡Œéœ€è¦æœ‰ä¸€æŠŠé”æ¥æ§åˆ¶
+					myLock.readLock().lock();
+					for(int i = 0 ; i < sw.size(); i++){
+						SocketWrapper tmp = sw.get(i);
+						if(tmp == this){
+							continue;
+						}else if(tmp.socketType == MSG_TYPE_DEBUG_CMD ){
+							tmp.sendMessage(msg);
+						}else if(tmp.socketType == MSG_TYPE_CONTORL){
+							//å¦‚æœæ˜¯æ§åˆ¶ç¨‹åºçš„è¯ï¼Œéœ€è¦è¿›ä¸€æ­¥ç­›é€‰
+							if(msgClientID != null){
+								if(tmp.clientId.equals(msgClientID)){
+									if (true == tmp.sendMessage(msg) )
+										p(clientId +  "----R---->" + tmp.clientId + " --->Success \r MSG " + msg);
+									else
+										e(clientId +  "----R---->" + tmp.clientId + " --->Failure \r MSG " + msg);
+
+									System.out.println();
+								}
+							}else {
+								tmp.sendMessage(msg);
+							}
+						}else {
+							e("the socketType error " + tmp.socketType);
+						}
+					}
+					myLock.readLock().unlock();
+
+					break;
+
+				case MSG_TYPE_DEBUG_CMD:
+					//è¿™é‡Œéœ€è¦æœ‰ä¸€æŠŠé”æ¥æ§åˆ¶
+					myLock.readLock().lock();
+					for(int i = 0 ; i < sw.size(); i++){
+						SocketWrapper tmp = sw.get(i);
+						if(tmp == this){
+							continue;
+						}
+						if(tmp.socketType == MSG_TYPE_SIMULATE ||
+								tmp.socketType == MSG_TYPE_CONTORL){
+							tmp.sendMessage(msg);
+						}
+					}
+					myLock.readLock().unlock();
+					break;
+
+				case MSG_TYPE_CONTORL:
+					//æ¥è‡ªæ§åˆ¶ç«¯çš„æ¶ˆæ¯ï¼Œéœ€è¦å‘é€ç»™æ¨¡æ‹Ÿå™¨å’Œå‘½ä»¤è¡Œ
+					//è¿™é‡Œéœ€è¦æœ‰ä¸€æŠŠé”æ¥æ§åˆ¶
+					myLock.readLock().lock();
+					for(int i = 0 ; i < sw.size(); i++){
+						SocketWrapper tmp = sw.get(i);
+						if(tmp == this){
+							continue;
+						}
+
+						if(tmp.socketType == MSG_TYPE_DEBUG_CMD){
+							tmp.sendMessage(msg);
+						}
+
+						if(tmp.socketType == MSG_TYPE_SIMULATE){
+
+							if ( true == tmp.sendMessage(msg) )
+								p(clientId +  "----S---->" + tmp.clientId + " --> Success   \r MSG " + msg);
+							else
+								p(clientId +  "----S---->" + tmp.clientId + " --> Failure   \r MSG " + msg);
+						}
+					}
+					myLock.readLock().unlock();
+					break;
+
+				default:
+					myLock.readLock().lock();
+					for(int i = 0 ; i < sw.size(); i++){
+						SocketWrapper tmp = sw.get(i);
+						if(tmp != this){
+							tmp.sendMessage(msg);
+						}
+					}
+					myLock.readLock().unlock();
+					break;
 			}
 		}
-		
+
 		private void p(String str){
 			if(str != null){
 				writeFileAndPrint("=============================" + getTime()+ "==================================");
 				writeFileAndPrint(str);
-				writeFileAndPrint("===================================================================\n");				
+				writeFileAndPrint("===================================================================\n");
 			}else {
 				System.out.println();
 			}
 		}
-		
+
 		private void e(String str) {
 			System.err.println("\t\t" + str);
 			writeFileAndPrint(str);
 		}
-		
-		private synchronized void writeFileAndPrint(String str){			         
+
+		private synchronized void writeFileAndPrint(String str){
 			System.out.println(str);
 			try {
 				logOutput.write(str);
 				logOutput.newLine();
 				logOutput.flush();
-			} catch (IOException e) {				
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-		
+
 		class ReaderMsg implements Runnable {
-	        @Override 
-	        public void run() {
-	        	byte[] b = new byte[1024*1024*4];
-	            while (isRun) {
-	                try {
-	                	Thread.sleep(100);
-	                	
-	                    if (socket.isConnected()) {
-	                        //byte[] b = new byte[1024*1024*8];
-	                        int value = inputStream.read(b);
-	                        
-	                        if(value > 0){
-	                        	String str = new String(b,0,value);
-	                        	
-	                        	//ÓĞ¿ÉÄÜÊÕµ½¶àÌõÏûÏ¢£¬ËùÒÔĞèÒªÒ»¸ö·Ö¸ô·û
-	                        	String[] tmp = str.split("@end@");
-	                        	for (String strValue : tmp) {	
+			@Override
+			public void run() {
+				byte[] b = new byte[1024*1024*4];
+				while (isRun) {
+					try {
+						Thread.sleep(100);
+
+						if (socket.isConnected()) {
+							//byte[] b = new byte[1024*1024*8];
+							int value = inputStream.read(b);
+
+							if(value > 0){
+								String str = new String(b,0,value);
+
+								//æœ‰å¯èƒ½æ”¶åˆ°å¤šæ¡æ¶ˆæ¯ï¼Œæ‰€ä»¥éœ€è¦ä¸€ä¸ªåˆ†éš”ç¬¦
+								String[] tmp = str.split("@end@");
+								for (String strValue : tmp) {
 									sendMessageToOther(strValue);
 								}
 
-	                        	str = null;
-	                        	tmp = null;
-	                        }
-	                    }else {
-	                    	p(" socket is not connected");
-	                    }
+								str = null;
+								tmp = null;
+							}
+						}else {
+							p(" socket is not connected");
+						}
 
-	                }catch(SocketException e){
-	                	p("ReaderMsg SocketException Error " + e.getMessage() + " will remove this ");
-	                	close();
-	                }catch(InterruptedException e){
-                                p("ReaderMsg InterruptedException Error " + e.getMessage() + " will remove this ");
-	                	close();
-	                }catch(Exception e) 
-                    {
-                        p("ReaderMsg InterruptedException Error " + e.getMessage() + " will remove this ");
-	                	close();
-                        java.awt.Toolkit.getDefaultToolkit().beep();
-                    }
-	            }
-	        }
-	    }
-    }
+					}catch(SocketException e){
+						p("ReaderMsg SocketException Error " + e.getMessage() + " will remove this ");
+						close();
+					}catch(InterruptedException e){
+						p("ReaderMsg InterruptedException Error " + e.getMessage() + " will remove this ");
+						close();
+					}catch(Exception e)
+					{
+						p("ReaderMsg InterruptedException Error " + e.getMessage() + " will remove this ");
+						close();
+						java.awt.Toolkit.getDefaultToolkit().beep();
+					}
+				}
+			}
+		}
+	}
 
 }

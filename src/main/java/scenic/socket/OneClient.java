@@ -16,7 +16,7 @@ import java.util.concurrent.PriorityBlockingQueue;
 public class OneClient {
 	final Properties prop = new Properties();
 	String extendsPath = System.getProperty("user.dir") + "/config.properties";
-	
+
 	public static void main(String args[]) {
 		new OneClient().run();
 	}
@@ -27,10 +27,10 @@ public class OneClient {
 		Socket socket = null;
 		try {
 			String ip = getExtendsConfigKey("serverIP");
-			
+
 			System.out.println("Connect ServerIP is " + ip);
 			socket = new Socket(ip, 8000);
-			
+
 			new Thread(new WriteMsg(socket)).start();
 			new Thread(new ReaderMsg(socket)).start();
 
@@ -43,8 +43,8 @@ public class OneClient {
 		}
 
 	}
-	
-	
+
+
 	private String getExtendsConfigKey(String key){
 		String cmd = null;
 		try {
@@ -54,13 +54,13 @@ public class OneClient {
 		} catch (IOException e2) {
 			e2.printStackTrace();
 		}
-		
+
 		return cmd;
 	}
-	
+
 	private void executeConfig() {
 		System.out.println("extends config Path " + extendsPath );
-		
+
 		new Thread((new Runnable() {
 			@Override
 			public void run() {
@@ -69,24 +69,24 @@ public class OneClient {
 				try {
 					while ((line = bufferedReader.readLine()) != "exit") {
 						String cmd = null;
-						
+
 						if(cmd == null){
 							cmd = getExtendsConfigKey(line);
 						}
-						
+
 //						if(cmd == null){
 //							cmd = getConfigKey(line);
 //						}
-						
-						
+
+
 						if(cmd == null){
 							cmd = line;
 						}
-						
+
 						if (cmd != null && cmd.length() >= 1) {
 							cmdQeue.add(cmd);
 						}
-						
+
 						Thread.sleep(100);
 					}
 				} catch (IOException e) {
@@ -125,7 +125,7 @@ public class OneClient {
 					}
 
 				} catch (SocketException e) {
-					System.out.println("·şÎñÆ÷Òì³££¬ÇëÖØÆô");
+					System.out.println("æœåŠ¡å™¨å¼‚å¸¸ï¼Œè¯·é‡å¯");
 					System.exit(0);
 				} catch (IOException e) {
 					e.printStackTrace();
