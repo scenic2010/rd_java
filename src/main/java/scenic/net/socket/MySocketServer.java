@@ -1,4 +1,4 @@
-package scenic.socket;
+package scenic.net.socket;
 
 
 import org.json.JSONObject;

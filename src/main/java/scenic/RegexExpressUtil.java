@@ -1,4 +1,6 @@
 package scenic;
+import org.junit.Test;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -169,5 +171,21 @@ public class RegexExpressUtil {
 		System.out.println(phone.matches("^((1[3,5,8][0-9])|(14[5,7])|(17[0,6,7,8]))\\d{8}$"));
 
 
+	}
+
+	@Test
+	public void testGetHTTPCode() {
+
+		System.out.println("200".matches("\\d{3}"));
+
+		String str = "[HTTP/1.1 200 OK]";
+		Pattern pattern = Pattern.compile(".+HTTP/.+(\\d{3}).+");
+		Matcher result = pattern.matcher(str);
+		if(result.matches()){
+			System.out.println("ok " +  result.group(1));
+
+		}else {
+			System.out.println("not matches");
+		}
 	}
 }

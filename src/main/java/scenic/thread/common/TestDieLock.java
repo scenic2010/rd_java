@@ -1,9 +1,16 @@
-package scenic.thread;
+package scenic.thread.common;
+
+import org.apache.log4j.Logger;
+
+import scenic.MyLogger;
 
 /**
  * Created by scenic on 16/6/6.
+ * 死锁的模型
  */
 public class TestDieLock {
+    private static Logger myLogger = MyLogger.get(TestDieLock.class);
+
     public static Object lock1 = new Object();
     public static Object lock2 = new Object();
 
@@ -16,18 +23,13 @@ public class TestDieLock {
     }
 
 
-    public static class Thread1 extends Thread {
+    private static class Thread1 extends Thread {
         @Override
         public void run() {
-
             synchronized (lock1) {
-                System.out.println("t1 get the lock1");
-                try {
-                    Thread.sleep(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                System.out.println("t1 want the lock2");
+                myLogger.debug("Thread1 get the lock1");
+                waitForTime(1);
+                myLogger.debug("Thread1 want the lock2");
                 synchronized (lock2) {
                     System.out.println("t1 run execute finish");
                 }
@@ -35,18 +37,14 @@ public class TestDieLock {
         }
     }
 
-    public static class Thread2 extends Thread {
+    private static class Thread2 extends Thread {
         @Override
         public void run() {
             synchronized (lock2) {
-                System.out.println("t2 get the lock2");
-                try {
-                    Thread.sleep(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                myLogger.debug("Thread2 get the lock2");
+                waitForTime(1);
 
-                System.out.println("t2 want the lock1");
+                myLogger.debug("Thread2 want the lock1");
                 synchronized (lock1) {
                     System.out.println("t1 run execute finish");
                 }
@@ -54,5 +52,11 @@ public class TestDieLock {
         }
     }
 
-
+    private static void waitForTime(int time){
+        try {
+            Thread.sleep(time);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }

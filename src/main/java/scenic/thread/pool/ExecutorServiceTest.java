@@ -32,6 +32,8 @@ public class ExecutorServiceTest {
         ExecutorService executorService = Executors.newCachedThreadPool();
         logger.debug("execute service is " + executorService);
         Future<?> future = executorService.submit(mCallable);
+        logger.debug("begin execute method get of future");
+        executorService.shutdown();
 
         Object futureGetValue = future.get();
         logger.debug("futureGetValue is " + futureGetValue);
@@ -58,11 +60,6 @@ public class ExecutorServiceTest {
         logger.debug(Thread.currentThread().getName());
     }
 
-
-
-
-
-
     Runnable myRunnable = () -> {
         logger.debug(Thread.currentThread().getName() + "myRunnable begin execute");
         try {
@@ -79,7 +76,7 @@ public class ExecutorServiceTest {
 
     Callable<String> mCallable = () -> {
         String name = Thread.currentThread().getName();
-        Thread.sleep(1000);
+        Thread.sleep(3000);
         logger.debug(name + " mCallable execute finish");
         return "mCallable return " + name;
     };

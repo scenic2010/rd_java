@@ -1,4 +1,4 @@
-package scenic.socket;
+package scenic.net.socket;
 
 import java.io.*;
 import java.net.Socket;

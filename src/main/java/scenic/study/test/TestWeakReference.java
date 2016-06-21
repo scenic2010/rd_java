@@ -13,7 +13,7 @@ public class TestWeakReference {
         a = null;   
         int i = 0;   
         while (weak.get() != null) {   
-            System.out.println(String.format("Get str from object of WeakReference: %s, count1: %d", weak.get().str, ++i));
+            System.out.println(String.format("Get str from object of WeakReference: %s, number1: %d", weak.get().str, ++i));
             if (i % 10 == 0) {   
                 System.gc();   
                 System.out.println("System.gc() was invoked!");   

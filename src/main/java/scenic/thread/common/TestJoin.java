@@ -1,4 +1,4 @@
-package scenic.thread;
+package scenic.thread.common;
 
 /**
  * Created by scenic on 16/6/6.
