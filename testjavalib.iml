@@ -45,8 +45,8 @@
     <orderEntry type="library" exported="" name="dex-translator-0.0.9.3" level="project" />
     <orderEntry type="library" exported="" name="poi-3.8-20120326" level="project" />
     <orderEntry type="library" exported="" name="jode-1.1.2-pre1" level="project" />
-    <orderEntry type="library" exported="" name="scenic_util" level="project" />
     <orderEntry type="library" exported="" name="ant" level="project" />
+    <orderEntry type="library" exported="" name="scenic_util" level="project" />
     <orderEntry type="library" exported="" name="testjavalib.testjavalib" level="project" />
   </component>
 </module>

@@ -1,18 +1,28 @@
 package scenic.uncomplie;
 
-import brut.androlib.ApkDecoder;
-import com.lenovo.nova.util.StringUtil;
+import com.nova.scenic.projectlibs.util.StringUtil;
+
 import org.apache.commons.io.FileUtils;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.TextArea;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.dnd.*;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.DropTargetEvent;
+import java.awt.dnd.DropTargetListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.swing.JFrame;
+import javax.swing.JTextArea;
+
+import brut.androlib.ApkDecoder;
 
 public class MainClass extends JFrame implements DropTargetListener {
 	
