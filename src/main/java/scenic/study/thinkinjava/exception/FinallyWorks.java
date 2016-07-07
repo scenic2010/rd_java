@@ -3,23 +3,25 @@ package scenic.study.thinkinjava.exception;//: c10:FinallyWorks.java
 // www.BruceEckel.com. See copyright notice in CopyRight.txt.
 // The finally clause is always executed.
 
-class ThreeException extends Exception {}
+class ThreeException extends Exception {
+}
 
 public class FinallyWorks {
-  static int count = 0;
-  public static void main(String[] args) {
-    while(true) {
-      try {
-        // Post-increment is zero first time:
-        if(count++ == 0)
-          throw new ThreeException();
-        System.out.println("No exception");
-      } catch(ThreeException e) {
-        System.err.println("ThreeException");
-      } finally {
-        System.err.println("In finally clause");
-        if(count == 2) break; // out of "while"
-      }
+    static int count = 0;
+
+    public static void main(String[] args) {
+        while (true) {
+            try {
+                // Post-increment is zero first time:
+                if (count++ == 0)
+                    throw new ThreeException();
+                System.out.println("No exception");
+            } catch (ThreeException e) {
+                System.out.println("ThreeException");
+            } finally {
+                System.out.println("In finally clause");
+                if (count == 6) break; // out of "while"
+            }
+        }
     }
-  }
 } ///:~
