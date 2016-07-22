@@ -28,8 +28,7 @@ all:  \
 	Pair.class \
 	MapGenerator.class \
 	Collections2.class \
-	CountryCapitals.class \
-	StripQualifiers.class
+	CountryCapitals.class
 
 
 Generator.class: Generator.java
@@ -47,4 +46,3 @@ Pair.class: Pair.java
 MapGenerator.class: MapGenerator.java
 Collections2.class: Collections2.java
 CountryCapitals.class: CountryCapitals.java
-StripQualifiers.class: StripQualifiers.java

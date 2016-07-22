@@ -4,7 +4,6 @@
 package scenic.study.thinkinjava.bruceeckel.util;
 public class CountryCapitals {
   public static final String[][] pairs = {
-    // Africa
     {"ALGERIA","Algiers"}, {"ANGOLA","Luanda"},
     {"BENIN","Porto-Novo"}, {"BOTSWANA","Gaberone"},
     {"BURKINA FASO","Ouagadougou"}, {"BURUNDI","Bujumbura"},

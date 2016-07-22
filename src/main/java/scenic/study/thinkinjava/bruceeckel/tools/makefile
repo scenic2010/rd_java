@@ -15,8 +15,14 @@ JVCFLAGS =
 
 all:  \
 	P.class \
-	Assert.class
+	Assert.class \
+	InFile.class \
+	PrintFile.class \
+	OutFile.class
 
 
 P.class: P.java
 Assert.class: Assert.java
+InFile.class: InFile.java
+PrintFile.class: PrintFile.java
+OutFile.class: OutFile.java

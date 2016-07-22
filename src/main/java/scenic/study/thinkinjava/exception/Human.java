@@ -15,8 +15,8 @@ public class Human {
             throw new Sneeze();
         } catch (Sneeze s) {
             System.err.println("Caught Sneeze");
-        } catch (Annoyance a) {
+        } /*catch (Annoyance a) {
             System.err.println("Caught Annoyance");
-        }
+        }*/
     }
 } ///:~
