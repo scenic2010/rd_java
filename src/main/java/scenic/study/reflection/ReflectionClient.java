@@ -28,7 +28,7 @@ public class ReflectionClient {
     }
 
     @Test
-    public void testClass() throws ClassNotFoundException {
+    public void testClassLoadType() throws ClassNotFoundException {
         Class<Demo1> class1 = Demo1.class;
         Class class2 =  Class.forName("scenic.study.reflection.ReflectionClient$Demo1");
 
@@ -36,6 +36,20 @@ public class ReflectionClient {
         logger.info(class1 == class2);
 
     }
+
+    @Test
+    public void testParentClass(){
+        Class class2 = Demo2.class;
+        Class class3 = Demo3.class;
+        logger.info(class2);
+        logger.info(class3);
+        logger.info(class3.getSuperclass());
+
+        logger.info(class2 == class3);
+        logger.info(class2 == class3.getSuperclass());
+    }
+
+
 
     @Test
     public void testCreateDemo1() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
@@ -54,6 +68,8 @@ public class ReflectionClient {
     }
 
 
+
+
     static class Demo1 {
 
     }
@@ -64,4 +80,12 @@ public class ReflectionClient {
             this.a = a;
         }
     }
+
+    public static class Demo3 extends Demo2 {
+
+        public Demo3(int a) {
+            super(a);
+        }
+    }
+
 }

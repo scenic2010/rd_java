@@ -7,7 +7,7 @@ public class Main {
     public void main(String args[]) {
         VehicleFactory factory = new PlaneFactory();
         Moveable move = factory.create();
-        move.run();;
+        move.run();
     }
 
 }
