@@ -1,22 +1,26 @@
-package scenic.study.designmode.factory.simple_factory;
+package scenic.study.designmode.factory.three_kind_factory;
 
 import org.junit.Test;
 
 /**
  * Created by scenic on 16/7/27.
- * 探索三种工厂设计模式
+ * 探索三种工厂设计模式,
+ * 简单工厂
+ * 工厂方法
+ * 抽象工厂
  */
 public class Main {
-    public static void main(String args[]) {
 
-
-    }
 
     @Test
     public void testSimple() {
         SimpleFactory.clientTest();
     }
 
+    @Test
+    public void testFactoryMethod(){
+        FactoryMethod.clientTest();
+    }
 
     /**
      * 简单工厂
@@ -113,8 +117,17 @@ public class Main {
 
     public static class FactoryMethod {
         public static void clientTest() {
-            OperationFactory factory = null;
+            OperationFactory factory;
             factory = new FactoryAdd();
+            System.out.println(factory.createOperation().setNumber(1,2).getResult());
+
+            factory = new FactorySubTract();
+            System.out.println(factory.createOperation().setNumber(1,2).getResult());
+
+            factory = new FactoryMultiply();
+            System.out.println(factory.createOperation().setNumber(1,2).getResult());
+
+            factory = new FactoryDivision();
             System.out.println(factory.createOperation().setNumber(1,2).getResult());
         }
 
