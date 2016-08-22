@@ -10,7 +10,7 @@ import scenic.study.designmode.create_type.builder.abstract_core.Product;
 /**
  * Created by scenic on 16/8/8.
  * 建造者
- * 将一个复杂对象的构建与它的表示分离,是的同样的构建过程可以创建不同的表示
+ * 将一个复杂对象的构建与它的表示分离,使得同样的构建过程可以创建不同的表示
  */
 public class Main {
 
@@ -36,14 +36,14 @@ public class Main {
 
         {
             PersonDirector director = new PersonDirector(new ConcreteImpl.PersonThinBuilder());
-            director.createPersion();
+            director.createPerson();
         }
 
         System.out.println("=============");
 
         {
             PersonDirector director = new PersonDirector(new ConcreteImpl.PersonFatBuilder());
-            director.createPersion();
+            director.createPerson();
         }
     }
 

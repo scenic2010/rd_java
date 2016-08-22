@@ -9,7 +9,7 @@ public class PersonDirector {
         this.pensionBuilder = builder;
     }
 
-    public void createPersion() {
+    public void createPerson() {
         pensionBuilder.buildHeader();
         pensionBuilder.buildBody();
         pensionBuilder.buildArmLeft();

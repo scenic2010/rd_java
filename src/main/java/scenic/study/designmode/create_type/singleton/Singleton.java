@@ -12,8 +12,13 @@ public class Singleton {
         }
     }
 
-    private static Singleton singleton;
+    public static void main(String args[]){
+        System.out.println( EasySingleton.aaa);
+    }
 
+
+
+    private static Singleton singleton;
 
     public static Singleton getInstance() {
 

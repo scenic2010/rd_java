@@ -46,6 +46,7 @@ public class Main {
             OperationSimpleFactory.createOperate("*").setNumber(1, 2).getResult();
             OperationSimpleFactory.createOperate("/").setNumber(1, 2).getResult();
 
+
             System.out.println();
             System.out.println();
 
@@ -64,7 +65,7 @@ public class Main {
             OperationSimpleFactory.createOperateByReflect(rootPath + "$SimpleFactory$OperationSubtract").setNumber(1, 2).getResult();
             OperationSimpleFactory.createOperateByReflect(rootPath + "$SimpleFactory$OperationMultiply").setNumber(1, 2).getResult();
             OperationSimpleFactory.createOperateByReflect(rootPath + "$SimpleFactory$OperationDivision").setNumber(1, 2).getResult();
-
+            OperationSimpleFactory.getOperationByInstance(new Cos()).setNumber(1,2).getResult();
         }
 
         static class OperationSimpleFactory {
@@ -98,6 +99,10 @@ public class Main {
                 Class<Operation> classZ = (Class<Operation>) Class.forName(classNam);
                 Operation instance = classZ.newInstance();
                 return instance;
+            }
+
+            private static Operation getOperationByInstance(Operation operation){
+                return operation;
             }
 
         }
@@ -155,6 +160,13 @@ public class Main {
                 logger.info(number1 + " / " + number2 + " = " + value);
                 return value;
 
+            }
+        }
+
+        static class Cos extends Operation {
+            @Override
+            double getResult() {
+                return Math.atan(number2/number1);
             }
         }
 
@@ -320,6 +332,7 @@ public class Main {
                 Weapon createWeapon();
 
                 Vehicle createVehicle();
+
             }
         }
 
