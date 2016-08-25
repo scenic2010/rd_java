@@ -40,6 +40,7 @@ public class MyLogger {
         public TestWithLogger(){
             logger = MyLogger.get(this.getClass());
         }
+
     }
 
 }
