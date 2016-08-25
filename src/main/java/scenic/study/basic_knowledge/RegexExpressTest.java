@@ -3,6 +3,8 @@ package scenic.study.basic_knowledge;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -85,7 +87,7 @@ public class RegexExpressTest {
 
     public static void main(String[] args) {
 
-
+        new RegexExpressTest().testReplace();
         //匹配一位字母
 //		Pattern p = Pattern.compile("[a-z]");
 
@@ -121,45 +123,99 @@ public class RegexExpressTest {
         logger.debug(phone.matches("^((1[3,5,8][0-9])|(14[5,7])|(17[0,6,7,8]))\\d{8}$"));
     }
 
+
+    @Test
+    public void testSimpleReplace() {
+        Pattern p = Pattern.compile("java", Pattern.CASE_INSENSITIVE);
+        Matcher m = p.matcher("Java JAVA java I love java  you hate java");
+        logger.debug(m.replaceAll("JAVA"));
+    }
+
     @Test
     public void testReplace() {
-        {
-            Pattern p = Pattern.compile("java", Pattern.CASE_INSENSITIVE);
-            Matcher m = p.matcher("Java JAVA java I love java  you hate java");
-            logger.debug(m.replaceAll("JAVA"));
+
+        System.out.println("=============");
+        for(int i = 0; i < 20 ;i ++ ){
+
+             Thread thread = new Thread(new Runnable() {
+                 @Override
+                 public void run() {
+                     testLog4J();
+                 }
+             });
+
+            thread.setName("name " + i);
+            thread.start();
         }
 
-        {
-            String logPatten = "%t %c%20 %l %c";
-
-            StringBuffer buffer = new StringBuffer();
-            Pattern pattern = Pattern.compile("%[a-z](%\\d{1,2})?", Pattern.CASE_INSENSITIVE);
-            Matcher matcher = pattern.matcher(logPatten);
-
-            logger.debug(matcher.lookingAt());
-            matcher.reset();
-            while (matcher.find()) {
-                String value = matcher.group();
-                if (value.equals("%t")) {
-
-                }
-                if (value.equals("%c")) {
-
-                }
-                if (value.equals("%l")) {
-
-                }
-                logger.debug("value " + value);
-                matcher.appendReplacement(buffer, "ttt");
-
-            }
 
 
-            logger.debug("buffer is " + buffer.toString());
-        }
+        testLog4J();
 
     }
 
+    private void testLog4J() {
+        String threadName = "threadName ";
+        String className = "className ";
+        String methodName = "methodName ";
+        String lineNumber = "lineNumber ";
+        String msg = "msg ";
+
+
+        String logPatten = "scenic_log %t%6 %c %l - %m";
+
+
+        Pattern pattern = Pattern.compile("%[a-z](%\\d{1,2})?", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(logPatten);
+        matcher.reset();
+        StringBuffer buffer = new StringBuffer();
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        while (matcher.find()) {
+            String value = matcher.group();
+            if (value.startsWith("%t")) {
+                //线程名称
+
+                matcher.appendReplacement(buffer, checkLength(threadName, value));
+            } else if (value.startsWith("%c")) {
+                //类名
+                matcher.appendReplacement(buffer, checkLength(className, value));
+            }
+            if (value.startsWith("%l")) {
+                matcher.appendReplacement(buffer, checkLength(methodName + ":" + lineNumber, value));
+            }
+
+            if (value.startsWith("%d")) {
+                String time = new SimpleDateFormat().format(new Date(System.currentTimeMillis()));
+                matcher.appendReplacement(buffer, checkLength(time, value));
+            }
+
+            if (value.startsWith("%m")) {
+                matcher.appendReplacement(buffer, checkLength(msg, value));
+            }
+        }
+        logger.debug("buffer is " + buffer.toString());
+    }
+
+    private String checkLength(String origin, String value) {
+        Pattern pattern = Pattern.compile("%[a-z]%(\\d{1,2})", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(value);
+        if (matcher.matches()) {
+            int lengthFlag = Integer.parseInt(matcher.group(1));
+            if (origin.length() < lengthFlag) {
+                StringBuffer tmp = new StringBuffer(origin);
+                for (int i = lengthFlag - origin.length(); i > 0; i--) {
+                    tmp.append(" ");
+                }
+                return tmp.toString();
+            }
+        }
+
+        return origin;
+    }
 
     @Test
     public void testGroup1() {

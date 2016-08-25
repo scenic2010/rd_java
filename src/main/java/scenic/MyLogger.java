@@ -17,8 +17,8 @@ public class MyLogger {
 
     private static String getPath() {
         String path = System.getProperty("user.dir");
-        if(!path.contains("testjavalib")){
-            path+="/testjavalib";
+        if(!path.contains("rd_java")){
+            path+="/rd_java";
         }
         return path;
     }
@@ -32,6 +32,14 @@ public class MyLogger {
 
     public static void main(String args[]){
         new MyLogger().test();
+    }
+
+    public static class TestWithLogger {
+        protected Logger logger = null;
+
+        public TestWithLogger(){
+            logger = MyLogger.get(this.getClass());
+        }
     }
 
 }

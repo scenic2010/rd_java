@@ -47,6 +47,7 @@ public class SynchronizedAndLock {
 
 
 
+
     public static void main(String args[]) throws InterruptedException {
 
         BlockingQueue<IntegerAdder> blockingQueue = new PriorityBlockingQueue<>();
