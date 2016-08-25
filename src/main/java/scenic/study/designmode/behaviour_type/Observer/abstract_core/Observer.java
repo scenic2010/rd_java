@@ -1,5 +1,4 @@
-package scenic.study.designmode.behaviour_type.Observer.abstract_core;
-
+package scenic.study.designmode.behaviour_type.observer.abstract_core;
 /**
  * Created by scenic on 16/8/10.
  */
