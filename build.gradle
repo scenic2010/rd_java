@@ -26,5 +26,6 @@ dependencies {
     compile 'org.hamcrest:hamcrest-all:1.3'
     compile 'org.json:json:20160212'
     compile 'log4j:log4j:1.2.17'
+    compile 'io.reactivex:rxjava:1.1.10'
     compile files('libs/scenic_util.jar')
 }

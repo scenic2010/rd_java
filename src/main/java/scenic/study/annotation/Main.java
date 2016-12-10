@@ -1,7 +1,6 @@
 package scenic.study.annotation;
 
 import org.junit.Test;
-import org.junit.experimental.theories.ParametersSuppliedBy;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -52,7 +51,8 @@ public class Main extends MyLogger.TestWithLogger{
     private void showAnnotation(Annotation annotations[]) {
         if(annotations.length > 0){
             for (Annotation a :annotations) {
-                logger.debug(a);
+                logger.debug(a + " \t " + (a.annotationType().equals(FieldAnnotation.class)));
+
             }
         }else{
             logger.debug("length is 0");

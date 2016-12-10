@@ -1,5 +1,7 @@
 package scenic.study.basic_knowledge.sort;
 
+import org.junit.Test;
+
 public class MyMath {
 
 	public static void swap(int[] array,int indexa, int indexb){
@@ -11,4 +13,13 @@ public class MyMath {
 		array[indexb] = tmp;
 		
 	}
+
+
+	@Test
+	public void testArray() {
+
+
+
+	}
+
 }

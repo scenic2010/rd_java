@@ -17,10 +17,10 @@ public class ClassLoaderTest extends MyLogger.TestWithLogger{
     @Test
     public void testBegin(){
 
-        URL[] urls = sun.misc.Launcher.getBootstrapClassPath().getURLs();
-        for (int i = 0; i < urls.length; i++) {
-           logger.debug(urls[i].toExternalForm());
-        }
+//        URL[] urls = sun.misc.Launcher.getBootstrapClassPath().getURLs();
+//        for (int i = 0; i < urls.length; i++) {
+//           logger.debug(urls[i].toExternalForm());
+//        }
 
     }
 
