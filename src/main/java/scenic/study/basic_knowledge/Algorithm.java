@@ -2,12 +2,16 @@ package scenic.study.basic_knowledge;
 
 import org.junit.Test;
 
+import java.util.List;
+
 /**
  * Created by scenic on 2016/11/15.
  * 测试算法
  */
 
 public class Algorithm {
+
+    List list = null;
 
     public static void showArray (int[] array){
         if(array == null){
@@ -20,6 +24,7 @@ public class Algorithm {
         }
 
     }
+
 
 
     public static class TestArray {
